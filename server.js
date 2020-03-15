@@ -17,10 +17,8 @@ express.get("/loop/:upperNum", async (req, res) => {
       )
     }
 
-    const end = Date.now()
-
     return res.json({
-      timeOfRequest: `${(begin - end) / 1000} seconds`,
+      timeOfRequest: `${(begin - Date.now()) / 1000} seconds`,
       posts: returnedPosts
     })
   } catch (err) {
@@ -46,10 +44,8 @@ express.get("/promise/:upperNum", async (req, res) => {
 
     const fetchAll = await Promise.allSettled(promises)
 
-    const end = Date.now()
-
     return res.json({
-      timeOfRequest: `${(begin - end) / 1000} seconds`,
+      timeOfRequest: `${(begin - Date.now()) / 1000} seconds`,
       posts: fetchAll
     })
   } catch (err) {
