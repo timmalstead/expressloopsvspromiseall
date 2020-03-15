@@ -6,7 +6,6 @@
   "license": "MIT",
   "dependencies": {
     "express": "^4.17.1",
-    "node-fetch": "^2.6.0",
-    "nodemon": "^2.0.2"
+    "node-fetch": "^2.6.0"
   }
 }
