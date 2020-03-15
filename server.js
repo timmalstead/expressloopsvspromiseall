@@ -8,7 +8,7 @@ express.get("/loop/:upperNum", async (req, res) => {
   try {
     const begin = Date.now()
 
-    let upperNum = parseInt(req.params.upperNum)
+    const upperNum = parseInt(req.params.upperNum)
 
     if (maxNumCached >= upperNum) {
       return res.json({
@@ -19,7 +19,7 @@ express.get("/loop/:upperNum", async (req, res) => {
 
     const returnedPosts = []
 
-    for (let i = 1; i <= upperNum; i++) {
+    for (let i = maxNumCached + 1 || 1; i <= upperNum; i++) {
       returnedPosts.push(
         await fetch(`https://jsonplaceholder.typicode.com/photos/${i}`, {
           method: "GET",
@@ -29,14 +29,12 @@ express.get("/loop/:upperNum", async (req, res) => {
       )
     }
 
-    if (upperNum > maxNumCached) {
-      maxNumCached = upperNum
-      responsesCached = returnedPosts
-    }
+    maxNumCached = upperNum
+    responsesCached = [...responsesCached, ...returnedPosts]
 
     return res.json({
       requestTime: `${(Date.now() - begin) / 1000} seconds`,
-      posts: returnedPosts
+      posts: responsesCached
     })
   } catch (err) {
     return res.json({ error: err.message })
@@ -47,7 +45,7 @@ express.get("/promise/:upperNum", async (req, res) => {
   try {
     const begin = Date.now()
 
-    let upperNum = parseInt(req.params.upperNum)
+    const upperNum = parseInt(req.params.upperNum)
 
     if (maxNumCached >= upperNum) {
       return res.json({
@@ -58,7 +56,7 @@ express.get("/promise/:upperNum", async (req, res) => {
 
     const promises = []
 
-    for (let i = 1; i <= upperNum; i++) {
+    for (let i = maxNumCached + 1 || 1; i <= upperNum; i++) {
       promises.push(
         fetch(`https://jsonplaceholder.typicode.com/photos/${i}`, {
           method: "GET",
@@ -70,14 +68,12 @@ express.get("/promise/:upperNum", async (req, res) => {
 
     const fetchAll = await Promise.allSettled(promises)
 
-    if (upperNum > maxNumCached) {
-      maxNumCached = upperNum
-      responsesCached = fetchAll
-    }
+    maxNumCached = upperNum
+    responsesCached = [...responsesCached, ...fetchAll]
 
     return res.json({
       requestTime: `${(Date.now() - begin) / 1000} seconds`,
-      posts: fetchAll
+      posts: responsesCached
     })
   } catch (err) {
     return res.json({ error: err.message })
