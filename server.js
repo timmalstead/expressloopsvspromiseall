@@ -8,16 +8,13 @@ express.get("/loop/:upperNum", async (req, res) => {
     const returnedPosts = []
 
     for (let i = 1; i <= parseInt(req.params.upperNum); i++) {
-      const fetched = await fetch(
-        `https://jsonplaceholder.typicode.com/photos/${i}`,
-        {
+      returnedPosts.push(
+        await fetch(`https://jsonplaceholder.typicode.com/photos/${i}`, {
           method: "GET",
           credentials: "include",
           headers: { "Content-Type": "application/json" }
-        }
+        }).then(promise => promise.json())
       )
-      const read = await fetched.json()
-      returnedPosts.push(read)
     }
 
     const end = Date.now()
@@ -27,8 +24,7 @@ express.get("/loop/:upperNum", async (req, res) => {
       posts: returnedPosts
     })
   } catch (err) {
-    res.status(400)
-    return res.json({ body: { error: err.message } })
+    return res.json({ error: err.message })
   }
 })
 
@@ -57,8 +53,7 @@ express.get("/promise/:upperNum", async (req, res) => {
       posts: fetchAll
     })
   } catch (err) {
-    res.status(400)
-    return res.json({ body: { error: err.message } })
+    return res.json({ error: err.message })
   }
 })
 

@@ -1,17 +1,11 @@
 {
   "name": "fetching_test",
-  "version": "1.0.0",
-  "description": "",
+  "description": "A simple proof of concept illustrating time differences in fetch calls in loops vs promiseAll",
   "main": "server.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Timothy Malstead, timmalstead@gmail.com",
+  "license": "MIT",
   "dependencies": {
     "express": "^4.17.1",
-    "node-fetch": "^2.6.0",
-    "nodemon": "^2.0.2"
+    "node-fetch": "^2.6.0"
   }
 }
