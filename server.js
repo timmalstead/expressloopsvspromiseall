@@ -1,6 +1,9 @@
 const express = require("express")()
 const fetch = require("node-fetch")
 
+let maxNumCached = 0
+let responsesCached = []
+
 express.get("/loop/:upperNum", async (req, res) => {
   try {
     const begin = Date.now()
@@ -30,9 +33,18 @@ express.get("/promise/:upperNum", async (req, res) => {
   try {
     const begin = Date.now()
 
+    let upperNum = parseInt(req.params.upperNum)
+
+    if (maxNumCached >= upperNum) {
+      return res.json({
+        requestTime: `${(Date.now() - begin) / 1000} seconds`,
+        posts: responsesCached.slice(0, upperNum)
+      })
+    }
+
     const promises = []
 
-    for (let i = 1; i <= parseInt(req.params.upperNum); i++) {
+    for (let i = 1; i <= upperNum; i++) {
       promises.push(
         fetch(`https://jsonplaceholder.typicode.com/photos/${i}`, {
           method: "GET",
@@ -43,6 +55,11 @@ express.get("/promise/:upperNum", async (req, res) => {
     }
 
     const fetchAll = await Promise.allSettled(promises)
+
+    if (upperNum > maxNumCached) {
+      maxNumCached = upperNum
+      responsesCached = fetchAll
+    }
 
     return res.json({
       requestTime: `${(Date.now() - begin) / 1000} seconds`,
