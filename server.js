@@ -4,22 +4,22 @@ const fetch = require("node-fetch")
 let maxNumCached = 0
 let responsesCached = []
 
-express.get("/loop/:upperNum", async (req, res) => {
+express.get("/loop/:requestNum", async (req, res) => {
   try {
     const begin = Date.now()
 
-    const upperNum = parseInt(req.params.upperNum)
+    const requestNum = parseInt(req.params.requestNum)
 
-    if (maxNumCached >= upperNum) {
+    if (maxNumCached >= requestNum) {
       return res.json({
         requestTime: `${(Date.now() - begin) / 1000} seconds`,
-        posts: responsesCached.slice(0, upperNum)
+        posts: responsesCached.slice(0, requestNum)
       })
     }
 
     const returnedPosts = []
 
-    for (let i = maxNumCached + 1 || 1; i <= upperNum; i++) {
+    for (let i = maxNumCached + 1; i <= requestNum; i++) {
       returnedPosts.push(
         await fetch(`https://jsonplaceholder.typicode.com/photos/${i}`, {
           method: "GET",
@@ -29,7 +29,7 @@ express.get("/loop/:upperNum", async (req, res) => {
       )
     }
 
-    maxNumCached = upperNum
+    maxNumCached = requestNum
     responsesCached = [...responsesCached, ...returnedPosts]
 
     return res.json({
@@ -41,22 +41,22 @@ express.get("/loop/:upperNum", async (req, res) => {
   }
 })
 
-express.get("/promise/:upperNum", async (req, res) => {
+express.get("/promise/:requestNum", async (req, res) => {
   try {
     const begin = Date.now()
 
-    const upperNum = parseInt(req.params.upperNum)
+    const requestNum = parseInt(req.params.requestNum)
 
-    if (maxNumCached >= upperNum) {
+    if (maxNumCached >= requestNum) {
       return res.json({
         requestTime: `${(Date.now() - begin) / 1000} seconds`,
-        posts: responsesCached.slice(0, upperNum)
+        posts: responsesCached.slice(0, requestNum)
       })
     }
 
     const promises = []
 
-    for (let i = maxNumCached + 1 || 1; i <= upperNum; i++) {
+    for (let i = maxNumCached + 1; i <= requestNum; i++) {
       promises.push(
         fetch(`https://jsonplaceholder.typicode.com/photos/${i}`, {
           method: "GET",
@@ -68,7 +68,7 @@ express.get("/promise/:upperNum", async (req, res) => {
 
     const fetchAll = await Promise.allSettled(promises)
 
-    maxNumCached = upperNum
+    maxNumCached = requestNum
     responsesCached = [...responsesCached, ...fetchAll]
 
     return res.json({
