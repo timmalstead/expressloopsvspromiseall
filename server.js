@@ -8,7 +8,7 @@ express.get("/:requestNum", async (req, res) => {
   try {
     const begin = Date.now()
 
-    const requestNum = parseInt(req.params.requestNum)
+    const requestNum = Math.abs(parseInt(req.params.requestNum)) || 1
 
     if (maxNumCached >= requestNum) {
       return res.json({
